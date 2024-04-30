@@ -8,7 +8,7 @@
 #' @rdname bypass-helpers
 #' @export
 `.subset<-` <- function(x, ..., value) {
-  local_bypass("[<-", oldClass(x))
+  local_bypass0("[<-", oldClass(x))
   x[...] <- value
   x
 }
@@ -16,7 +16,7 @@
 #' @rdname bypass-helpers
 #' @export
 `.subset2<-` <- function(x, ..., value) {
-  local_bypass("[[<-", oldClass(x))
+  local_bypass0("[[<-", oldClass(x))
   x[[...]] <- value
   x
 }

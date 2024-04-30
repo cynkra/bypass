@@ -1,13 +1,11 @@
 #' Bypass S3 Methods
 #'
-#' * `with_bypass()` evaluates `expr` without triggering the S3 methods for
-#' the given fun and class
-#' * `with_bypasses()` evaluates `expr` without triggering S3 methods for some curated
+#' * `with_bypass()` evaluates `expr` without triggering S3 methods for some curated
 #'  internal generics (see details)
-#' * `local_bypass()` and `local_bypasses()` set up a function not to trigger these S3 methods from the
+#' * `local_bypass()` sets up a function not to trigger these S3 methods from the
 #'   function's code
 #'
-#' `with_bypasses()` and `local_bypasses()` override
+#' `with_bypass()` and `local_bypass()` override
 #' `c`, `dim`, `dim<-`, `$`, `$<-`, `lapply`, `length`, `lengths`, `names`,
 #' `names<-`, `sapply`, `[`, `[[`, `[<-`, `[[<-`, `unlist`.
 #'
@@ -21,20 +19,18 @@
 #'  `with_bindings()` returns the value of expr.
 #' @export
 #' @name with_bypass
-with_bypasses <- function(expr, .env = .GlobalEnv) {
-  local_bypasses(.env = .env)
+with_bypass <- function(expr, .env = .GlobalEnv) {
+  local_bypass(.env = .env)
   expr
 }
 
 #' @export
 #' @rdname with_bypass
-local_bypasses <- function(.env = .GlobalEnv, .frame = parent.frame()) {
+local_bypass <- function(.env = .GlobalEnv, .frame = parent.frame()) {
   rlang::local_bindings(!!!shims, .env = .env, .frame = .frame)
 }
 
-#' @export
-#' @rdname with_bypass
-local_bypass <- function(fun, cl, .env = .GlobalEnv, .frame = parent.frame()) {
+local_bypass0 <- function(fun, cl, .env = .GlobalEnv, .frame = parent.frame()) {
   if (!is.null(cl)) {
     method_name <- sprintf("%s.%s", fun, .subset2(cl, 1))
     rlang::local_bindings(
@@ -45,9 +41,7 @@ local_bypass <- function(fun, cl, .env = .GlobalEnv, .frame = parent.frame()) {
   }
 }
 
-#' @export
-#' @rdname with_bypass
-with_bypass <- function(fun, cl, expr, .env = .GlobalEnv, .frame = parent.frame()) {
-  local_bypass(fun, cl, .env, .frame)
+with_bypass0 <- function(fun, cl, expr, .env = .GlobalEnv, .frame = parent.frame()) {
+  local_bypass0(fun, cl, .env, .frame)
   expr
 }

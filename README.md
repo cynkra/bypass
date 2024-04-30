@@ -28,9 +28,9 @@ Note that base R already has `.subset()` and `.subset2()` as low level
 counterparts to `[` and `[[`. check also {rlang} for low level versions
 of `is.symbol()`, `is.na()` etc
 
-Additionally the functions `with_bypasses()` and `local_bypasses()`
-allow you to locally type the base versions and get the bypass behavior.
-This is especially useful for `[<-` and `[[<-`.
+Additionally the functions `with_bypass()` and `local_bypass()` allow
+you to locally type the base versions and get the bypass behavior. This
+is especially useful for `[<-` and `[[<-`.
 
 ## Installation
 
@@ -73,13 +73,13 @@ identical(rref[[1]][[1]], rref)
 #> [1] "R: A Language and Environment for Statistical Computing"
 
 # with {bypass} we can use the standard syntax
-with_bypasses(rref[[1]][["title"]])
+with_bypass(rref[[1]][["title"]])
 #> [1] "R: A Language and Environment for Statistical Computing"
 
-# `local_bypasses()` is meant to be used in functions and is probably what
+# `local_bypass()` is meant to be used in functions and is probably what
 # you'll want to use
 fun <- function(x) {
-  local_bypasses()
+  local_bypass()
   x[[1]]$title <- "!!!!!!!!!!!!!!!!"
   x
 }
@@ -159,9 +159,9 @@ unlist(x)
 #> a b 
 #> 1 2
 
-# NOTE: `local_bypasses()` should normally be called in a function so we don't 
+# NOTE: `local_bypass()` should normally be called in a function so we don't 
 # change the global state, here for demo purposes:
-local_bypasses()
+local_bypass()
 c(x)
 #> $a
 #> [1] 1

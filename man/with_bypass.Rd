@@ -2,18 +2,12 @@
 % Please edit documentation in R/bypass.R
 \name{with_bypass}
 \alias{with_bypass}
-\alias{with_bypasses}
-\alias{local_bypasses}
 \alias{local_bypass}
 \title{Bypass S3 Methods}
 \usage{
-with_bypasses(expr, .env = .GlobalEnv)
+with_bypass(expr, .env = .GlobalEnv)
 
-local_bypasses(.env = .GlobalEnv, .frame = parent.frame())
-
-local_bypass(fun, cl, .env = .GlobalEnv, .frame = parent.frame())
-
-with_bypass(fun, cl, expr, .env = .GlobalEnv, .frame = parent.frame())
+local_bypass(.env = .GlobalEnv, .frame = parent.frame())
 }
 \arguments{
 \item{expr}{An expression to evaluate with temporary bindings}
@@ -24,16 +18,14 @@ with_bypass(fun, cl, expr, .env = .GlobalEnv, .frame = parent.frame())
 }
 \description{
 \itemize{
-\item \code{with_bypass()} evaluates \code{expr} without triggering the S3 methods for
-the given fun and class
-\item \code{with_bypasses()} evaluates \code{expr} without triggering S3 methods for some curated
+\item \code{with_bypass()} evaluates \code{expr} without triggering S3 methods for some curated
 internal generics (see details)
-\item \code{local_bypass()} and \code{local_bypasses()} set up a function not to trigger these S3 methods from the
+\item \code{local_bypass()} sets up a function not to trigger these S3 methods from the
 function's code
 }
 }
 \details{
-\code{with_bypasses()} and \code{local_bypasses()} override
+\code{with_bypass()} and \code{local_bypass()} override
 \code{c}, \code{dim}, \verb{dim<-}, \code{$}, \verb{$<-}, \code{lapply}, \code{length}, \code{lengths}, \code{names},
 \verb{names<-}, \code{sapply}, \code{[}, \code{[[}, \verb{[<-}, \verb{[[<-}, \code{unlist}.
 

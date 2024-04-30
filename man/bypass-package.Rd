@@ -8,6 +8,14 @@
 \description{
 Provides a way to use the default behavior of internal generics, bypassing the S3 methods. This makes working with objects at the low level much easier and safer.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/cynkra/bypass}
+  \item Report bugs at \url{https://github.com/cynkra/bypass/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Antoine Fabri \email{antoine.fabri@gmail.com}
 

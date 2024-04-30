@@ -5,7 +5,7 @@
 #' @rdname bypass-helpers
 #' @export
 .unlist <- function(x, recursive = TRUE, use.names = TRUE) {
-  local_bypass("unlist", oldClass(x))
+  local_bypass0("unlist", oldClass(x))
   unlist(x)
 }
 
