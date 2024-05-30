@@ -8,7 +8,7 @@
 #' @rdname bypass-helpers
 #' @export
 `.subset1` <- function(x, ...) {
-  cl <- class(x)
+  cl <- oldClass(x)
   x <- unclass(x)
   out <- x[...]
   class(out) <- cl
@@ -18,7 +18,7 @@
 #' @rdname bypass-helpers
 #' @export
 `.subset1<-` <- function(x, ..., value) {
-  cl <- class(x)
+  cl <- oldClass(x)
   x <- unclass(x)
   x[...] <- value
   class(x) <- cl
@@ -28,7 +28,7 @@
 #' @rdname bypass-helpers
 #' @export
 `.subset2<-` <- function(x, ..., value) {
-  cl <- class(x)
+  cl <- oldClass(x)
   x <- unclass(x)
   x[[...]] <- value
   class(x) <- cl
