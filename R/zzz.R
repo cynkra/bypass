@@ -20,9 +20,9 @@ shims <- NULL
     names = .names,
     `names<-` = `.names<-`,
     sapply = .sapply,
-    `[` = .subset,
+    `[` = .subset1,
     `[[` = .subset2,
-    `[<-` = `.subset<-`,
+    `[<-` = `.subset1<-`,
     `[[<-` = `.subset2<-`,
     unlist = .unlist
   )

@@ -3,11 +3,14 @@
 \name{with_bypass}
 \alias{with_bypass}
 \alias{local_bypass}
+\alias{global_bypass}
 \title{Bypass S3 Methods}
 \usage{
 with_bypass(expr, .env = .GlobalEnv)
 
 local_bypass(.env = .GlobalEnv, .frame = parent.frame())
+
+global_bypass(.env = .GlobalEnv)
 }
 \arguments{
 \item{expr}{An expression to evaluate with temporary bindings}
@@ -22,6 +25,9 @@ local_bypass(.env = .GlobalEnv, .frame = parent.frame())
 internal generics (see details)
 \item \code{local_bypass()} sets up a function not to trigger these S3 methods from the
 function's code
+\item \code{global_bypass()} overrides internal generics to set the behavior globally
+in a given environment, it's designed with packages in mind (use
+\code{bypass::global_bypass(asNamespace(pkgname))} in \code{.onLoad()})
 }
 }
 \details{

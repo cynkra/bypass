@@ -4,6 +4,9 @@
 #'  internal generics (see details)
 #' * `local_bypass()` sets up a function not to trigger these S3 methods from the
 #'   function's code
+#' * `global_bypass()` overrides internal generics to set the behavior globally
+#'   in a given environment, it's designed with packages in mind (use
+#'   `bypass::global_bypass(asNamespace(pkgname))` in `.onLoad()`)
 #'
 #' `with_bypass()` and `local_bypass()` override
 #' `c`, `dim`, `dim<-`, `$`, `$<-`, `lapply`, `length`, `lengths`, `names`,
@@ -30,18 +33,10 @@ local_bypass <- function(.env = .GlobalEnv, .frame = parent.frame()) {
   rlang::local_bindings(!!!shims, .env = .env, .frame = .frame)
 }
 
-local_bypass0 <- function(fun, cl, .env = .GlobalEnv, .frame = parent.frame()) {
-  if (!is.null(cl)) {
-    method_name <- sprintf("%s.%s", fun, .subset2(cl, 1))
-    rlang::local_bindings(
-      !!method_name := function(x, ...) NextMethod(object = NA),
-      .env = .env,
-      .frame = .frame
-    )
+#' @export
+#' @rdname with_bypass
+global_bypass <- function(.env = .GlobalEnv) {
+  for (nm in names(shims)) {
+    assign(nm, shims[[nm]], .env)
   }
-}
-
-with_bypass0 <- function(fun, cl, expr, .env = .GlobalEnv, .frame = parent.frame()) {
-  local_bypass0(fun, cl, .env, .frame)
-  expr
 }

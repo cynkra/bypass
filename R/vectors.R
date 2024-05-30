@@ -5,22 +5,13 @@
 #' @rdname bypass-helpers
 #' @export
 .unlist <- function(x, recursive = TRUE, use.names = TRUE) {
-  local_bypass0("unlist", oldClass(x))
-  unlist(x)
+  unlist(unclass(x))
 }
 
 #' @rdname bypass-helpers
 #' @export
 .lapply <- function(X, FUN, ...) {
-  # for ignores class, so we don't need to copy
-  # so should be more efficient than lapply(unclass(x), FUN, ...)
-  len <- .length(X)
-  out <- vector("list", len)
-  for (i in seq_len(len)) {
-    out[[i]] <- FUN(.subset2(X, i), ...)
-  }
-  .names(out) <- .names(X)
-  out
+  lapply(unclass(X), FUN, ...)
 }
 
 #' @rdname bypass-helpers

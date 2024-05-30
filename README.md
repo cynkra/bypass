@@ -20,17 +20,28 @@ We provide counterparts to existing functions:
 | names    | .names      |
 | names\<- | .names\<-   |
 | sapply   | .sapply     |
-| \[\<-    | .subset\<-  |
+| \[\<     | .subset1    |
+| \[\<-    | .subset1\<- |
 | \[\[\<-  | .subset2\<- |
 | unlist   | .unlist     |
 
-Note that base R already has `.subset()` and `.subset2()` as low level
-counterparts to `[` and `[[`. check also {rlang} for low level versions
-of `is.symbol()`, `is.na()` etc
+Note that base R already has `.subset2()` as a low level counterpart to
+`[[`. `.subset1()` is different from `.subset()` because it doesn’t lose
+attributes other than names. `.dollar()` is a wrapper around
+`.subset2()` so we also lose the partial matching of the original `$`
+function.
 
-Additionally the functions `with_bypass()` and `local_bypass()` allow
-you to locally type the base versions and get the bypass behavior. This
-is especially useful for `[<-` and `[[<-`.
+3 additional functions are provided :
+
+- `with_bypass()` allows you to type the base versions in the `expr`
+  argument and get the bypass behavior
+- `local_bypass()` does the same but locally for the function in which
+  it’s called
+- `global_bypass()` does this for a full package, it’s meant to be used
+  in `.onLoad()`
+
+These are especially useful useful for `[<-` and `[[<-` which are tricky
+to use at the low level, as they need a lot of unclassing/reclassing.
 
 ## Installation
 
@@ -42,51 +53,104 @@ pak::pak("cynkra/bypass")
 
 ## Example 1
 
+At the high level POSIXlt objects look like simple vectors, and behave
+that way
+
 ``` r
 library(bypass)
-#> 
-#> Attaching package: 'bypass'
-#> The following object is masked from '.Rprofile':
-#> 
-#>     .c
-## from ?bibentry
-rref <- bibentry(
-   bibtype = "Manual",
-   title = "R: A Language and Environment for Statistical Computing",
-   author = person("R Core Team"),
-   organization = "R Foundation for Statistical Computing",
-   address = "Vienna, Austria",
-   year = 2014,
-   url = "https://www.R-project.org/"
-   )
-
-# The S3 method makes the object hard to manipulate
-identical(rref[[1]][[1]], rref)
-#> [1] TRUE
-
-# Base R helps here
-.subset2(rref, c(1, 1))
-#> [1] "R: A Language and Environment for Statistical Computing"
-
-# though it looks bad when we want to combine indices types
-.subset2(rref, 1) |> .subset2("title")
-#> [1] "R: A Language and Environment for Statistical Computing"
-
-# with {bypass} we can use the standard syntax
-with_bypass(rref[[1]][["title"]])
-#> [1] "R: A Language and Environment for Statistical Computing"
-
-# `local_bypass()` is meant to be used in functions and is probably what
-# you'll want to use
-fun <- function(x) {
-  local_bypass()
-  x[[1]]$title <- "!!!!!!!!!!!!!!!!"
-  x
-}
-fun(rref)
-#> R Core Team (2014). _!!!!!!!!!!!!!!!!_. R Foundation for Statistical
-#> Computing, Vienna, Austria. <https://www.R-project.org/>.
+x <- as.POSIXlt(c("2024-01-01", "2024-01-02"))
+length(x)
+#> [1] 2
+names(x)
+#> NULL
 ```
+
+But in fact “POSIXlt” objects are not atomic vectors but named lists of
+vectors, S3 methods, for `length()`, `names()`, and more, are defined so
+we can treat them just like vectors.
+
+Here’s another way we might have used to define the above object:
+
+``` r
+list(
+  sec = c(0, 0),
+  min = c(0L, 0L),
+  hour = c(0L, 0L),
+  mday = 1:2,
+  mon = c(0L, 0L),
+  year = c(124L, 124L),
+  wday = 1:2,
+  yday = 0:1,
+  isdst = c(0L, 0L),
+  zone = c("CET", "CET"),
+  gmtoff = c(NA_integer_, NA_integer_)
+) |>
+  structure(class = c("POSIXlt", "POSIXt"), tzone = c("", "CET", "CEST"), balanced = TRUE)
+#> [1] "2024-01-01 CET" "2024-01-02 CET"
+```
+
+The `.length()` and `.names()` functions can be used to access the low
+level length and names, these are roughly equivalent to
+`length(unclass(x))` and `names(unclass(x))` respectively, with special
+cases for environments.
+
+``` r
+.length(x)
+#> [1] 11
+.names(x)
+#>  [1] "sec"    "min"    "hour"   "mday"   "mon"    "year"   "wday"   "yday"  
+#>  [9] "isdst"  "zone"   "gmtoff"
+```
+
+The functions `with_bypass()`, `local_bypass()` and `global_bypass()`
+provide different ways to use the native syntax rather than dotted
+counterparts.
+
+``` r
+# with_bypass
+with_bypass(names(x))
+#>  [1] "sec"    "min"    "hour"   "mday"   "mon"    "year"   "wday"   "yday"  
+#>  [9] "isdst"  "zone"   "gmtoff"
+
+# local_bypass
+fun <- function() {
+  local_bypass()
+  names(x)
+}
+fun()
+#>  [1] "sec"    "min"    "hour"   "mday"   "mon"    "year"   "wday"   "yday"  
+#>  [9] "isdst"  "zone"   "gmtoff"
+
+# global_bypass (in a package)
+.onLoad <- function(libname, pkgname) {
+  bypass::global_bypass(asNamespace(pkgname))
+}
+# then names() will behave like .names() in the whole package
+```
+
+Low level replacement is one of the most useful features.
+
+``` r
+# without bypass
+x <- as.POSIXlt(c("2024-01-01", "2024-01-02"))
+cl <- class(x)
+x <- unclass(x)
+x$year <- c(120L, 121L)
+class(x) <- cl
+x
+#> [1] "2020-01-01 CET" "2021-01-02 CET"
+
+# with bypass
+x <- as.POSIXlt(c("2024-01-01", "2024-01-02"))
+with_bypass({
+  x$year <- c(120L, 121L)
+})
+x
+#> [1] "2020-01-01 CET" "2021-01-02 CET"
+```
+
+In case of replacement of nested elements the difference between both
+approaches will be even bigger.
 
 ## Example 2
 
@@ -95,7 +159,6 @@ x <- structure(list(a = 1, b = 2), class = "foo")
 c.foo <- function(...) 42
 dim.foo <- function(...) 42
 `$.foo` <- function(...) 42
-lapply.foo <- function(...) 42
 length.foo <- function(...) 42
 lengths.foo <- function(...) 42
 names.foo <- function(...) 42
