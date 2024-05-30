@@ -6,14 +6,20 @@
 \alias{global_bypass}
 \title{Bypass S3 Methods}
 \usage{
-with_bypass(expr, .env = .GlobalEnv)
+with_bypass(.expr, .env = .GlobalEnv)
 
 local_bypass(.env = .GlobalEnv, .frame = parent.frame())
 
 global_bypass(.env = .GlobalEnv)
 }
 \arguments{
-\item{expr}{An expression to evaluate with temporary bindings}
+\item{.expr}{An expression to evaluate with temporary bindings.}
+
+\item{.env}{An environment.}
+
+\item{.frame}{The frame environment that determines the scope of
+the temporary bindings. When that frame is popped from the call
+stack, bindings are switched back to their original values.}
 }
 \value{
 \code{local_bypass()} returns the values of old bindings invisibly;

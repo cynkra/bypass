@@ -17,14 +17,15 @@
 #' `.lengths`, `.names`, `.names<-`, `.sapply`, `.subset`, `.subset2`, ,
 #' `.subset<-`, `.subset2<-`, `.unlist`
 #'
-#' @param expr An expression to evaluate with temporary bindings
+#' @inheritParams rlang::local_bindings
+#'
 #' @return `local_bypass()` returns the values of old bindings invisibly;
 #'  `with_bindings()` returns the value of expr.
 #' @export
 #' @name with_bypass
-with_bypass <- function(expr, .env = .GlobalEnv) {
+with_bypass <- function(.expr, .env = .GlobalEnv) {
   local_bypass(.env = .env)
-  expr
+  .expr
 }
 
 #' @export

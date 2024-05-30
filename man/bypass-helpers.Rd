@@ -51,13 +51,14 @@
 .sapply(X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE)
 }
 \arguments{
-\item{x, ..., value}{Forwarded to internal generic counterparts}
+\item{x, ..., value, use.names, e1, e2, recursive, X, FUN, simplify, USE.NAMES}{Forwarded to internal generic counterparts}
 }
 \description{
 A collection of helpers that bypass the S3 dispatch of their internal
 generic counterparts to fall back on the default behavior.
 }
 \details{
-Note that \code{.subset()} and \code{.subset2()} are already defined in base R as
-ways to bypass the S3 dispatch of \code{[} and \code{[[}.
+Note that \code{.subset2()} is already defined in base R as
+ways to bypass the S3 dispatch of \code{[[}. We implemented \code{.subset1()} however
+as a version of \code{base::.subset()} that doesn't strip attributes.
 }
