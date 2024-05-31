@@ -34,14 +34,14 @@ with_bypass <- function(.expr, .env = .GlobalEnv) {
 #' @export
 #' @rdname with_bypass
 local_bypass <- function(.env = .GlobalEnv, .frame = parent.frame()) {
-  rlang::local_bindings(!!!shims, .env = .env, .frame = .frame)
+  rlang::local_bindings(!!!shims_for_bypass, .env = .env, .frame = .frame)
 }
 
 #' @export
 #' @rdname with_bypass
 global_bypass <- function(.env = .GlobalEnv) {
-  for (nm in names(shims)) {
-    assign(nm, shims[[nm]], .env)
+  for (nm in names(shims_for_bypass)) {
+    assign(nm, shims_for_bypass[[nm]], .env)
   }
 }
 
@@ -55,5 +55,5 @@ with_dispatch <- function(.expr, .env = .GlobalEnv) {
 #' @export
 #' @rdname with_bypass
 local_dispatch <- function(.env = .GlobalEnv, .frame = parent.frame()) {
-  rlang::local_bindings(!!!shims0, .env = .env, .frame = .frame)
+  rlang::local_bindings(!!!shims_for_dispatch, .env = .env, .frame = .frame)
 }

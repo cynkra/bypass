@@ -1,8 +1,8 @@
-shims <- NULL
-shims0 <- NULL
+shims_for_bypass <- NULL
+shims_for_dispatch <- NULL
 
 .onLoad <- function(...) {
-  shims <<- list(
+  shims_for_bypass <<- list(
     c = .c,
     dim = .dim,
     `dim<-` = `.dim<-`,
@@ -21,7 +21,7 @@ shims0 <- NULL
     unlist = .unlist
   )
 
-  shims0 <<- list(
+  shims_for_dispatch <<- list(
     c = c,
     dim = dim,
     `dim<-` = `dim<-`,

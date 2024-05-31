@@ -36,12 +36,13 @@ test_that("dispatch", {
   expect_snapshot({
     fun <- function() {
       x <- as.POSIXlt(c("2024-01-01", "2024-01-02"))
+      print(names(x))
       local_bypass()
-      names(x)
+      print(names(x))
       with_dispatch(
         print(names(x))
       )
-      names(x)
+      print(names(x))
     }
     fun()
   })
