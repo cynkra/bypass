@@ -20,32 +20,35 @@ We provide counterparts to existing functions:
 | names    | .names      |
 | names\<- | .names\<-   |
 | sapply   | .sapply     |
-| \[\<     | .subset1    |
+| \[       | .subset1    |
 | \[\<-    | .subset1\<- |
 | \[\[\<-  | .subset2\<- |
 | unlist   | .unlist     |
 
 Note that base R already has `.subset2()` as a low level counterpart to
 `[[`. `.subset1()` is different from `.subset()` because it doesn’t lose
-attributes other than names. `.dollar()` is a wrapper around
-`.subset2()` so we also lose the partial matching of the original `$`
-function.
+attributes other than names and works on matrices. `.dollar()` is a
+wrapper around `.subset2()` so we also lose the partial matching of the
+original `$` function.
 
-3 additional functions are provided :
+Other functions are provided :
 
-- `with_bypass()` allows you to type the base versions in the `expr`
+- `with_bypass()` allows you to type the base versions in the `.expr`
   argument and get the bypass behavior
 - `local_bypass()` does the same but locally for the function in which
   it’s called
 - `global_bypass()` does this for a full package, it’s meant to be used
   in `.onLoad()`
+- `with_dispatch()` and `local_dispatch()` are the reverse of
+  `with_bypass()` and `local_bypass()`, they re-enable dispatch when
+  it’s been disabled by the other functions.
 
 These are especially useful useful for `[<-` and `[[<-` which are tricky
 to use at the low level, as they need a lot of unclassing/reclassing.
 
 ## Installation
 
-You can install the development version of bypass like so:
+Install with:
 
 ``` r
 pak::pak("cynkra/bypass")
@@ -54,7 +57,7 @@ pak::pak("cynkra/bypass")
 ## Example 1
 
 At the high level POSIXlt objects look like simple vectors, and behave
-that way
+that way:
 
 ``` r
 library(bypass)
@@ -162,7 +165,6 @@ dim.foo <- function(...) 42
 length.foo <- function(...) 42
 lengths.foo <- function(...) 42
 names.foo <- function(...) 42
-sapply.foo <- function(...) 42
 `[.foo` <- function(...) 42
 `[[.foo` <- function(...) 42
 unlist.foo <- function(...) 42
