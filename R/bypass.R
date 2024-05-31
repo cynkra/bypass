@@ -7,6 +7,9 @@
 #' * `global_bypass()` overrides internal generics to set the behavior globally
 #'   in a given environment, it's designed with packages in mind (use
 #'   `bypass::global_bypass(asNamespace(pkgname))` in `.onLoad()`)
+#' * `with_dispatch()` and `local_dispatch()` are the reverse of `with_bypass()`
+#'   and `local_bypass()`, they re-enable dispatch when it's been disabled by
+#'   the other functions.
 #'
 #' `with_bypass()` and `local_bypass()` override
 #' `c`, `dim`, `dim<-`, `$`, `$<-`, `lapply`, `length`, `lengths`, `names`,
@@ -40,4 +43,17 @@ global_bypass <- function(.env = .GlobalEnv) {
   for (nm in names(shims)) {
     assign(nm, shims[[nm]], .env)
   }
+}
+
+#' @export
+#' @name with_bypass
+with_dispatch <- function(.expr, .env = .GlobalEnv) {
+  local_dispatch(.env = .env)
+  .expr
+}
+
+#' @export
+#' @rdname with_bypass
+local_dispatch <- function(.env = .GlobalEnv, .frame = parent.frame()) {
+  rlang::local_bindings(!!!shims0, .env = .env, .frame = .frame)
 }

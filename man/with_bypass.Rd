@@ -4,6 +4,8 @@
 \alias{with_bypass}
 \alias{local_bypass}
 \alias{global_bypass}
+\alias{with_dispatch}
+\alias{local_dispatch}
 \title{Bypass S3 Methods}
 \usage{
 with_bypass(.expr, .env = .GlobalEnv)
@@ -11,6 +13,10 @@ with_bypass(.expr, .env = .GlobalEnv)
 local_bypass(.env = .GlobalEnv, .frame = parent.frame())
 
 global_bypass(.env = .GlobalEnv)
+
+with_dispatch(.expr, .env = .GlobalEnv)
+
+local_dispatch(.env = .GlobalEnv, .frame = parent.frame())
 }
 \arguments{
 \item{.expr}{An expression to evaluate with temporary bindings.}
@@ -34,6 +40,9 @@ function's code
 \item \code{global_bypass()} overrides internal generics to set the behavior globally
 in a given environment, it's designed with packages in mind (use
 \code{bypass::global_bypass(asNamespace(pkgname))} in \code{.onLoad()})
+\item \code{with_dispatch()} and \code{local_dispatch()} are the reverse of \code{with_bypass()}
+and \code{local_bypass()}, they re-enable dispatch when it's been disabled by
+the other functions.
 }
 }
 \details{

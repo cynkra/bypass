@@ -30,7 +30,19 @@ test_that("bypass", {
     unlist(x)
     .unlist(x)
   })
+})
 
-
-  expect_equal(2 * 2, 4)
+test_that("dispatch", {
+  expect_snapshot({
+    fun <- function() {
+      x <- as.POSIXlt(c("2024-01-01", "2024-01-02"))
+      local_bypass()
+      names(x)
+      with_dispatch(
+        print(names(x))
+      )
+      names(x)
+    }
+    fun()
+  })
 })

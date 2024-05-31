@@ -1,13 +1,7 @@
 shims <- NULL
+shims0 <- NULL
 
 .onLoad <- function(...) {
-  # handled <- setdiff(
-  #   ls(asNamespace("bypass"), all.names = TRUE, pattern = "^\\."),
-  #   c(".__DEVTOOLS__", ".__NAMESPACE__.", ".__S3MethodsTable__.", ".onLoad", ".packageName")
-  # )
-  # toString(sprintf("`%s`", handled))
-  # toString(sprintf("`%s`", names(shims)))
-
   shims <<- list(
     c = .c,
     dim = .dim,
@@ -25,5 +19,24 @@ shims <- NULL
     `[<-` = `.subset1<-`,
     `[[<-` = `.subset2<-`,
     unlist = .unlist
+  )
+
+  shims0 <<- list(
+    c = c,
+    dim = dim,
+    `dim<-` = `dim<-`,
+    `$` = `$`,
+    `$<-` = `$<-`,
+    lapply = lapply,
+    length = length,
+    lengths = lengths,
+    names = names,
+    `names<-` = `names<-`,
+    sapply = sapply,
+    `[` = `[`,
+    `[[` = `[[`,
+    `[<-` = `[<-`,
+    `[[<-` = `[[<-`,
+    unlist = unlist
   )
 }
